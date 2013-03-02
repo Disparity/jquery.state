@@ -1,0 +1,20 @@
+{
+	"name": "state",
+	"title": "jQuery state",
+	"description": "Manipulation with \"states\" of DOM elements",
+	"version": "0.1.0-alpha",
+	"author": {
+		"name": "Disparity",
+		"url": "https://github.com/Disparity/jquery.state"
+	},
+	"dependencies": {
+		"jquery": ">=1.6.0"
+	},
+	"licenses": [
+		{
+			"type": "GPLv2",
+			"url": "http://www.example.com/licenses/gpl.html"
+		}
+	]
+
+}
