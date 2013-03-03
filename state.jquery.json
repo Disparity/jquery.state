@@ -2,7 +2,7 @@
 	"name": "state",
 	"title": "jQuery state",
 	"description": "Manipulation with \"states\" of DOM elements",
-	"version": "0.1.0-alpha",
+	"version": "0.1.1",
 	"author": {
 		"name": "Disparity",
 		"url": "https://github.com/Disparity/jquery.state"
