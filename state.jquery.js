@@ -2,7 +2,7 @@
  * jQuery state plugin
  *
  * @author Disparity <disparity-github@yandex.ru>
- * @version 0.1.0-alpha
+ * @version 0.1.3
  */
 (function($, undefined) {
 	var stateParser = function(stateElem, setOrUnset) {
@@ -40,6 +40,9 @@
 		if (typeof setOrUnset !== "boolean" && setOrUnset !== undefined) {
 			throw {message: "Invalid argumment type"}; // @todo fix message
 		}
+		if ($element.isInState(stateName) === setOrUnset) {
+			return;
+		}
 		$element.toggleClass(stateName, setOrUnset);
 		stateNotificator($element, stateName, setOrUnset);
 	}
@@ -53,8 +56,8 @@
 		});
 	}
 
-	$.fn.addState = function(stateName) {return this.toggleState(stateName, true);}
-	$.fn.removeState = function(stateName) {return this.toggleState(stateName, false);}
+	$.fn.addState = function(state) {return this.toggleState(state, true);}
+	$.fn.removeState = function(state) {return this.toggleState(state, false);}
 	$.fn.isInState = function(stateName) {return this.is("." + stateName);}
 
 	$.fn.loadStates = function(dataKey) {
@@ -62,5 +65,16 @@
 			var $element = $(this);
 			$element.addState($element.data(dataKey || "state") || "");
 		});
+	}
+
+	$.fn.joinByState = function(state) {
+		var states = stateParser(state);
+		var $elements = this;
+		$.each(states, function(stateName) {
+			$elements.bind("set.state-" + stateName, function() {
+				$elements.not(this).removeState(stateName);
+			});
+		});
+		return this;
 	}
 })(jQuery);
