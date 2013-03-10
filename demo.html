@@ -28,7 +28,7 @@
 		<script type="text/javascript">
 			$(document)
 				.delegate(".js-container", "change.state", function(event) {
-					console.log(event.target.id +" " + event.state.name + ": " + (event.state.value || "undefined").toString());
+					console.log(event.target.id +" " + event.state.name + ": " + event.state.value.toString());
 				})
 			;
 
