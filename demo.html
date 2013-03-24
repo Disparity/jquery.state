@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title></title>
+		<title>Extended demo and documentation - in the process.</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 		<script src="state.jquery.js"></script>
@@ -18,6 +18,9 @@
 			div.clicked {
 				background-color: lightskyblue;
 			}
+			div.clicked.disabled {
+				background-color: brown;
+			}
 		</style>
 	</head>
 	<body>
@@ -26,26 +29,28 @@
 		<div class="js-container" id="container-3" data-state="disabled clicked">TODO write content <button>Click me!</button></div>
 
 		<script type="text/javascript">
-			$(document)
-				.delegate(".js-container", "change.state", function(event) {
-					console.log(event.target.id +" " + event.state.name + ": " + event.state.value.toString());
-				})
-			;
+			$(function() {
+				$(document.body)
+					.delegate(".js-container", "change.state", function(event) {
+						console.log(event.target.id + " " + event.state.name + ": " + event.state.value.toString());
+					})
+				;
 
-			$(".js-container button")
-				.bind("click", function(event) {
-					$(this).parent().toggleState("clicked");
-					$(".js-container button").not(this).parent().toggleState("disabled");
-				})
-			;
+				$(".js-container button")
+					.bind("click", function(event) {
+						$(this).parent().state("clicked", null);
+						$(".js-container button").not(this).parent().state("disabled", null);
+					})
+				;
 
-			$(".js-container")
-				.bind("change.state-disabled", function(event) {
-					$("button", this).attr("disabled", event.state.value);
-				})
-				.joinByState("clicked")
-				.loadStates()
-			;
+				$(".js-container")
+					.bind("change-disabled.state", function(event) {
+						$("button", this).attr("disabled", event.state.value);
+					})
+					.state("clicked disabled", "")
+					.state()
+				;
+			});
 
 		</script>
 	</body>
