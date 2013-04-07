@@ -152,8 +152,9 @@
 
 					stateStr = stateStr.replace(/\{(.*?)\}/g, function(match, stateStr) {
 						stateStr.replace(/(\w+)(\.\w+)?/g, function(match, stateName, stateGroup) {
-							stateGroup = (stateGroup|| ".default");
-							(groups[stateGroup][stateName] = groups[stateGroup][stateName] || []).push(element);
+							stateGroup = stateGroup || ".default";
+							(groups[stateGroup] || (groups[stateGroup] = {}) && (groups[stateGroup][stateName] || (groups[stateGroup][stateName] = [])));
+							groups[stateGroup][stateName].push(element);
 						});
 						return "";
 					});
@@ -166,7 +167,7 @@
 				});
 
 				$.each(groups, function(group) {
-					$.each(group, function(elements, stateName) {
+					$.each(groups[group], function(stateName, elements) {
 						jQueryProxy.joinByState.call($(elements), stateName);
 					});
 				});
@@ -196,11 +197,20 @@
 				}
 
 				throw {message: "Unexpected usage \"state\""};
+			},
+
+		filter:
+			function(element, i, match) {
+				var args = match[3].split(","),
+					stateName = args[0],
+					stateVal = args[1] !== undefined && $.trim(args[1]) === false.toString() ? false : true;
+				return Boolean(!state.is($(element), stateName) ^ stateVal);
 			}
 	};
 
 
 	$.fn.state = jQueryProxy.state;
+	$.extend($.expr[":"], {state: jQueryProxy.filter});
 	$(function() {
 		$(document.body).bind("add." + state.options.eventNamespace, handlers.switchedState);
 	});

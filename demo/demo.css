@@ -1,0 +1,83 @@
+.b-demo {
+	border-left: 3px solid #e5e5e5;
+	margin: 20px 0;
+	padding: 0 0 0 20px;
+	color: black;
+}
+.b-demo ul {
+	padding: 0;
+	margin: 0;
+	display: inline-block;
+}
+.b-demo li {
+	border-radius: 5px;
+	border: 1px solid cornflowerblue;
+	background-color: lightskyblue;
+	margin: 5px;
+	padding: 5px;
+	list-style: none;
+	padding-right: 20px;
+	cursor: default;
+}
+.b-demo li.checked {
+	border-color: green;
+	background-color: greenyellow;
+}
+.b-demo li.disabled {
+	border-color: grey;
+	background-color: lightgrey;
+}
+.b-demo li.checked label {
+	font-weight: bold;
+}
+.b-demo label {
+	padding: 2px 5px;
+	border: 1px dashed;
+}
+
+.b-demo dl {
+	width: auto;
+	display: inline-block;
+	position: relative;
+}
+.b-demo dl dt {
+	border: 1px solid grey;
+	background-color: #eaeaea;
+	border-radius: 5px 5px 0 0;
+	padding: 3px 6px;
+	display: block;
+	border-collapse: collapse;
+	float: left;
+	margin: 0px;
+	cursor: pointer;
+}
+.b-demo dl dd {
+	margin-top: 28px;
+	border: 1px solid;
+	padding: 3px;
+	display: none;
+	border-radius: 0 0 5px 5px;
+	border-collapse: collapse;
+	margin: 0px;
+	width: 100%;
+}
+.b-demo dl.first dd.first {
+	display: inline-block;
+}
+.b-demo dl.second dd.second {
+	display: inline-block;
+}
+.b-demo dl.third dd.third {
+	display: inline-block;
+}
+.b-demo dl.fourth dd.fourth {
+	display: inline-block;
+}
+.b-demo dl dt.active ~ dt {
+	border: 1px solid grey;
+	background-color: #eaeaea;
+}
+.b-demo dl dt, dl dd {
+	border-color: grey;
+	background-color: lightskyblue;
+}

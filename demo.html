@@ -6,27 +6,89 @@
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 		<script src="state.jquery.js"></script>
 		<style type="text/css">
-			div {
-				width: 200px;
-				height: 200px;
+
+			ul {
+				padding: 0;
 				display: inline-block;
-				background-color: lightgreen;
 			}
-			div.disabled {
-				background-color: lightgray;
-			}
-			div.clicked {
+			li {
+				border-radius: 5px;
+				border: 1px solid skyblue;
 				background-color: lightskyblue;
+				margin: 5px;
+				padding: 5px;
+				list-style: none;
 			}
-			div.clicked.disabled {
-				background-color: brown;
+			li.disabled {
+				border-color: grey;
+				background-color: lightgrey;
+			}
+			li.checked {
+				border-color: forestgreen;
+				background-color: greenyellow;
+			}
+			.example-group li {
+				padding-right: 20px;
+			}
+			.example-group li label {
+				padding: 2px 5px;
+				border: 1px dashed;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="js-container" id="container-1">TODO write content <button>Click me!</button></div>
+		<!--div class="js-container" id="container-1">TODO write content <button>Click me!</button></div>
 		<div class="js-container" id="container-2">TODO write content <button>Click me!</button></div>
-		<div class="js-container" id="container-3" data-state="disabled clicked">TODO write content <button>Click me!</button></div>
+		<div class="js-container" id="container-3" data-state="disabled clicked">TODO write content <button>Click me!</button></div-->
+
+			<h3>Listen state changing</h3>
+
+			<div class="js-example-listen js-example">
+				<ul>
+					<li><button>Toggle "disabled"</button> First item</li>
+					<li><button>Toggle "disabled"</button> Second item</li>
+					<li><button>Toggle "disabled"</button> Third item</li>
+				</ul>
+			</div>
+			<script type="text/javascript">
+				$(function() {
+					$(".js-example-listen")
+						.delegate("ul li button", "click", function() {
+							$(this).closest("li").siblings().state("disabled", null);
+						})
+						.delegate("ul li", "change-disabled.state", function(event) {
+							$("button", this).attr("disabled", event.state.value);
+						})
+						;
+				});
+			</script>
+
+			<h3>Group by state</h3>
+			<div class="js-example-group example-group">
+				<form>
+					<ul>
+						<li><label><input type="radio" name="example-group" value="1"> First item</label></li>
+						<li><label><input type="radio" name="example-group" value="2"> Second item</label></li>
+						<li><label><input type="radio" name="example-group" value="3"> Third item</label></li>
+					</ul>
+				</form>
+			</div>
+			<script type="text/javascript">
+				$(function() {
+					$(".js-example-group")
+						.find("ul li").state("", "checked").end()
+						.delegate("ul li", "click", function() {
+							$(this).state("checked", true);
+						})
+						.delegate("ul li", "add-checked.state", function() {
+							$(":radio", this).prop("checked", true);
+						})
+						;
+				});
+			</script>
+
+
+
 
 		<script type="text/javascript">
 			$(function() {

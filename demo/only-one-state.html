@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>"Switched" state</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="../state.jquery.js"></script>
+		<link type="text/css" rel="stylesheet" href="demo.css" />
+	</head>
+	<body class="b-demo">
+		<ul>
+			<li id="first">
+				<h3>First item</h3>
+				<p class="first">Description of first item</p>
+			</li>
+
+			<li>
+				<h3 id="second">Second item</h3>
+				<p class="second">Description of second item</p>
+			</li>
+
+			<li>
+				<h3 id="third">Third item</h3>
+				<p class="third">Description of third item</p>
+			</li>
+
+			<li>
+				<h3 id="fourth">Fourth item</h3>
+				<p class="fourth">Description of fourth item</p>
+			</li>
+		</ul>
+
+		<script type="text/javascript">
+			$(function() {
+				$("ul")
+					.delegate("li>:header", "add-active.state", function(event) {
+						$(event.delegateTarget).state(event.target.id, true);
+					})
+					.state("first second third fourth", "")
+						.find("li>:header")
+						.state("", "active")
+						.bind("click", function() {
+							$(this).state("active", true);
+						})
+				;
+			});
+		</script>
+	</body>
+</html>

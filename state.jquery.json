@@ -17,7 +17,7 @@
 			"url": "http://www.example.com/licenses/gpl.html"
 		}
 	],
-	"demo": "http://disparity.github.com/jquery.state/demo.html",
+	"demo": "http://disparity.github.com/jquery.state",
 	"bugs": "https://github.com/disparity/jquery.state/issues",
 	"keywords": ["jquery", "ui", "state", "events"],
 	"homepage": "http://disparity.github.com/jquery.state"

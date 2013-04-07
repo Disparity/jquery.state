@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Listen state changing</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="../state.jquery.js"></script>
+		<link type="text/css" rel="stylesheet" href="demo.css" />
+		<meta name="description" content="Listen state changing" />
+	</head>
+	<body class="b-demo">
+		<ul>
+			<li><button>Toggle "disabled"</button> First item</li>
+			<li><button>Toggle "disabled"</button> Second item</li>
+			<li><button>Toggle "disabled"</button> Third item</li>
+		</ul>
+		<script type="text/javascript">
+			$(function() {
+				$("ul li")
+					.delegate("button", "click", function() {
+						$(this).closest("li").siblings().state("disabled", null);
+					})
+					.bind("change-disabled.state", function(event) {
+						$("button", this).attr("disabled", event.state.value);
+					})
+				;
+			});
+		</script>
+	</body>
+</html>

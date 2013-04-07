@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Group by state</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="../state.jquery.js"></script>
+		<link type="text/css" rel="stylesheet" href="demo.css" />
+	</head>
+	<body class="b-demo">
+		<form>
+			<ul>
+				<li><label><input type="radio" name="example-group" value="1"> First item</label></li>
+				<li><label><input type="radio" name="example-group" value="2"> Second item</label></li>
+				<li><label><input type="radio" name="example-group" value="3"> Third item</label></li>
+			</ul>
+		</form>
+		<script type="text/javascript">
+			$(function() {
+				$("ul li")
+					.state("", "checked")
+					.bind("click", function() {
+						$(this).state("checked", true);
+					})
+					.bind("add-checked.state", function() {
+						$(":radio", this).prop("checked", true);
+					})
+				;
+			});
+		</script>
+	</body>
+</html>
