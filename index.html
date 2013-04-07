@@ -1,9 +1,10 @@
+
 <!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Jquery.state by Disparity</title>
+    <title>jQuery.state by Disparity</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -11,11 +12,20 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+	<link rel="stylesheet" href="./demo/demo.css">
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="state.jquery.js"></script>
+	<link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/vs.min.css">
+	<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+	<script type="text/javascript">
+		hljs.tabReplace = '    ';
+		hljs.initHighlightingOnLoad();
+	</script>
   </head>
   <body>
     <div class="wrapper">
       <header>
-        <h1>Jquery.state</h1>
+        <h1>jQuery.state</h1>
         <p>Manipulation with &quot;states&quot; of DOM elements</p>
 
         <p class="view"><a href="https://github.com/Disparity/jquery.state">View the Project on GitHub <small>Disparity/jquery.state</small></a></p>
@@ -28,32 +38,121 @@
         </ul>
       </header>
       <section>
-        <h3>Welcome to GitHub Pages.</h3>
+		  <h1>API Documentation</h1>
+		  <h1>Examples</h1>
+		  <h2>Listen state changing</h2>
+		  <div class="b-demo js-listen-state-changing">
+			  <ul>
+				<li><button>Toggle "disabled"</button> First item</li>
+				<li><button>Toggle "disabled"</button> Second item</li>
+				<li><button>Toggle "disabled"</button> Third item</li>
+			</ul>
+		  </div>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+		  <script type="text/javascript">
+			$(function() {
+				$(".js-listen-state-changing ul li")
+					.delegate("button", "click", function() {
+						$(this).closest("li").siblings().state("disabled", null);
+					})
+					.bind("change-disabled.state", function(event) {
+						$("button", this).attr("disabled", event.state.value);
+						return false;
+					})
+				;
+			});
+		</script>
+		<h3>Source:</h3>
+		<pre><code class="javascript">$("ul li")
+	.delegate("button", "click", function() {
+		$(this).closest("li").siblings().state("disabled", null);
+	})
+	.bind("change-disabled.state", function(event) {
+		$("button", this).attr("disabled", event.state.value);
+		return false;
+	})
+;
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+		<h2>Group by state</h2>
+		<div class="b-demo js-group-by-state">
+			<form>
+				<ul>
+					<li><label><input type="radio" name="example-group" value="1"> First item</label></li>
+					<li><label><input type="radio" name="example-group" value="2"> Second item</label></li>
+					<li><label><input type="radio" name="example-group" value="3"> Third item</label></li>
+				</ul>
+			</form>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+				$(".js-group-by-state ul li")
+					.state("", "checked")
+					.bind("click", function() {
+						$(this).state("checked", true);
+					})
+					.bind("add-checked.state", function() {
+						$(":radio", this).prop("checked", true);
+					})
+				;
+			});
+		</script>
+		<h3>Source:</h3>
+		<pre><code class="javascript">$("ul li")
+	.state("", "checked")
+	.bind("click", function() {
+		$(this).state("checked", true);
+	})
+	.bind("add-checked.state", function() {
+		$(":radio", this).prop("checked", true);
+	})
+;
+</code></pre>
 
-<h3>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+		<h2>Load states from data-*</h2>
+		<div class="b-demo js-load-states">
+			<form>
+				<ul>
+					<li data-state="{checked}">First item</li>
+					<li data-state="checked {checked}">Second item</li>
+					<li data-state="{checked.second}">Third item</li>
+					<li data-state="disabled [checked disabled] {checked.second}">Fourth item <button>toggle disabled</button></li>
+				</ul>
+			</form>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+				$(".js-load-states ul")
+					.find("li").state().end()
+					.delegate("li:state(disabled, false)", "click", function() {
+						$(this).state("checked", true);
+					})
+					.delegate("button", "click", function() {
+						$(this).parent().state("disabled", null);
+						return false;
+					})
+				;
+			});
+		</script>
+		<h3>Source:</h3>
+		<pre><code class="html">&lt;ul&gt;
+	&lt;li data-state="{checked}"&gt;First item&lt;/li&gt;
+	&lt;li data-state="checked {checked}"&gt;Second item&lt;/li&gt;
+	&lt;li data-state="{checked.second}"&gt;Third item&lt;/li&gt;
+	&lt;li data-state="disabled [checked disabled] {checked.second}"&gt;
+		Fourth item &lt;button&gt;toggle disabled&lt;/button&gt;
+	&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+		<pre><code class="javascript">$("ul")
+	.find("li").state().end()
+	.delegate("li:state(disabled, false)", "click", function() {
+		$(this).state("checked", true);
+	})
+	.delegate("button", "click", function() {
+		$(this).parent().state("disabled", null);
+		return false;
+	})
+;</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/Disparity">Disparity</a></p>
@@ -61,6 +160,5 @@ $ git checkout gh-pages
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
