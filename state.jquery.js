@@ -2,28 +2,30 @@
  * jQuery state plugin
  *
  * @author Disparity <disparity-github@yandex.ru>
- * @version 0.1.4
+ * @version 0.1.5
  */
 (function($, document, undefined) {
+	"use strict";
 	var state = {
 		options: {
 			eventNamespace: "state",
 			dataPrefix    : "state-",
+			stateDataKey  : "state",
 			events        :
 				[// @todo how many events to fire? ...
 					"change.{namespace}",
 					"change-{state_name}.{namespace}",
 					"{action}.{namespace}",
-					"{action}-{state_name}.{namespace}",
+					"{action}-{state_name}.{namespace}"
 				]
 		},
 
 		storage:
-			function($element, key, value) {
+			function(element, key, value) {
 				if (value === undefined) {
-					return $element.data(this.options.dataPrefix + key);
+					return $.data(element, this.options.dataPrefix + key);
 				}
-				$element.data(this.options.dataPrefix + key, value);
+				$.data(element, this.options.dataPrefix + key, value);
 				return undefined;
 			},
 
@@ -34,14 +36,16 @@
 
 		is:
 			function($element, stateName) {
-				return $element.is("." + stateName);
+				return $element.hasClass(stateName);
 			},
 
 		parser:
 			function(stateElem, stateVal) {
 				var states = {},
 					stateNames = [];
-				stateVal === null && (stateVal = undefined);
+				if (stateVal === null) {
+					stateVal = undefined;
+				}
 
 				if (typeof stateElem === "string") {
 					stateNames = $.grep(stateElem.split(/\s+/), function(stateName) {return $.trim(stateName) !== "";});
@@ -90,23 +94,21 @@
 	var handlers = {
 		switchedState:
 			function(event) {
-				var $element = $(event.target);
-				var groupStates = $.grep(state.storage($element, "one-groups") || [], function(variants) {return $.inArray(event.state.name, variants) !== -1;});
+				var groupStates = $.grep(state.storage(event.target, "one-groups") || [], function(variants) {return $.inArray(event.state.name, variants) !== -1;});
 
 				$.each(groupStates, function(index, variants) {
-					jQueryProxy.removeState.call($element, $.grep(variants, function(stateName) {return stateName !== event.state.name}));
+					jQueryHandlers.removeState.call($(event.target), $.grep(variants, function(stateName) {return stateName !== event.state.name;}));
 				});
 			},
 
 		onlyOne:
 			function(event) {
-				jQueryProxy.removeState.call(event.data.$elements.not(this), event.state.name);
+				jQueryHandlers.removeState.call(event.data.$elements.not(this), event.state.name);
 			}
-
 	};
 
 
-	var jQueryProxy = {
+	var jQueryHandlers = {
 		toggleState:
 			function(states, stateVal) {
 				states = state.parser(states, stateVal);
@@ -118,10 +120,10 @@
 			},
 
 		addState:
-			function(states) {return jQueryProxy.toggleState.call(this, states, true);},
+			function(states) {return jQueryHandlers.toggleState.call(this, states, true);},
 
 		removeState:
-			function(states) {return jQueryProxy.toggleState.call(this, states, false);},
+			function(states) {return jQueryHandlers.toggleState.call(this, states, false);},
 
 		joinByState:
 			function(states) {
@@ -136,9 +138,9 @@
 				states = $.map(state.parser(states), function(tmp, index) {return index;});
 				return this
 					.each(function() {
-						var stateGroups = (state.storage($(this), "one-groups") || []);
+						var stateGroups = (state.storage(this, "one-groups") || []);
 						stateGroups.push(states);
-						state.storage($(this), "one-groups", stateGroups);
+						state.storage(this, "one-groups", stateGroups);
 					});
 			},
 
@@ -148,7 +150,7 @@
 				this.each(function() {
 					var element = this,
 						$element = $(this),
-						stateStr = $element.data(dataKey || "state") || "";
+						stateStr = $element.data(dataKey || state.options.stateDataKey) || "";
 
 					stateStr = stateStr.replace(/\{(.*?)\}/g, function(match, stateStr) {
 						stateStr.replace(/(\w+)(\.\w+)?/g, function(match, stateName, stateGroup) {
@@ -159,16 +161,16 @@
 						return "";
 					});
 					stateStr = stateStr.replace(/\[(.*?)\]/g, function(match, states) {
-						jQueryProxy.onlyOneState.call($element, states);
+						jQueryHandlers.onlyOneState.call($element, states);
 						return "";
 					});
 
-					jQueryProxy.addState.call($element, stateStr);
+					jQueryHandlers.addState.call($element, stateStr);
 				});
 
 				$.each(groups, function(group) {
 					$.each(groups[group], function(stateName, elements) {
-						jQueryProxy.joinByState.call($(elements), stateName);
+						jQueryHandlers.joinByState.call($(elements), stateName);
 					});
 				});
 				return this;
@@ -176,24 +178,28 @@
 
 		state:
 			function() {
-				if (arguments.length == 2 && (typeof arguments[1] === "boolean" || arguments[1] === null || arguments[1] === undefined) ||
-					arguments.length == 1 && $.isPlainObject(arguments[0]))
+				// .state("state", boolean) | .state("state", null) | .state({state: boolean})
+				if (arguments.length === 2 && (typeof arguments[1] === "boolean" || arguments[1] === null || arguments[1] === undefined) ||
+					arguments.length === 1 && $.isPlainObject(arguments[0]))
 				{
-					return jQueryProxy.toggleState.apply(this, arguments);
+					return jQueryHandlers.toggleState.apply(this, arguments);
 				}
-				if (arguments.length == 1 && !$.isPlainObject(arguments[0])) {
+				// .state("state")
+				if (arguments.length === 1 && !$.isPlainObject(arguments[0])) {
 					return state.is(this, arguments[0]);
 				}
-				if (arguments.length == 2 &&
+				// .state("only one", "group by")
+				if (arguments.length === 2 &&
 					(typeof arguments[0] === "string" || $.isArray(arguments[0]) || $.isPlainObject(arguments[0])) &&
 					(typeof arguments[1] === "string" || $.isArray(arguments[1]) || $.isPlainObject(arguments[1]))
 				) {
-					jQueryProxy.onlyOneState.call(this, arguments[0]);
-					jQueryProxy.joinByState.call(this, arguments[1]);
+					jQueryHandlers.onlyOneState.call(this, arguments[0]);
+					jQueryHandlers.joinByState.call(this, arguments[1]);
 					return this;
 				}
-				if (arguments.length == 0) {
-					return jQueryProxy.loadStates.call(this);
+				// .state()
+				if (arguments.length === 0) {
+					return jQueryHandlers.loadStates.call(this);
 				}
 
 				throw {message: "Unexpected usage \"state\""};
@@ -203,14 +209,14 @@
 			function(element, i, match) {
 				var args = match[3].split(","),
 					stateName = args[0],
-					stateVal = args[1] !== undefined && $.trim(args[1]) === false.toString() ? false : true;
-				return Boolean(!state.is($(element), stateName) ^ stateVal);
+					stateVal = args[1] !== undefined && $.trim(args[1]) === "false" ? false : true;
+				return state.is($(element), stateName) === stateVal;
 			}
 	};
 
 
-	$.fn.state = jQueryProxy.state;
-	$.extend($.expr[":"], {state: jQueryProxy.filter});
+	$.fn.state = jQueryHandlers.state;
+	$.extend($.expr[":"], {state: jQueryHandlers.filter});
 	$(function() {
 		$(document.body).bind("add." + state.options.eventNamespace, handlers.switchedState);
 	});
